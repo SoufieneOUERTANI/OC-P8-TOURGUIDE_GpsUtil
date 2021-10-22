@@ -1,4 +1,4 @@
-package tourGuide.helper;
+package helper;
 
 public class InternalTestHelper {
 

@@ -11,12 +11,11 @@ import org.junit.Test;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
+import user.VisitedLocation;
 import rewardCentral.RewardCentral;
-import tourGuide.helper.InternalTestHelper;
-import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
-import tourGuide.user.User;
+import helper.InternalTestHelper;
+import rewardCentral.RewardsService;
+import user.User;
 import tripPricer.Provider;
 
 public class TestTourGuideService {
