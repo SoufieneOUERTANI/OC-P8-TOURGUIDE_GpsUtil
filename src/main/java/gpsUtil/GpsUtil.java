@@ -25,7 +25,7 @@ public class GpsUtil {
 
     public VisitedLocation getUserLocation(UUID userId) {
         rateLimiter.acquire();
-        this.sleep();
+        //this.sleepLighter();
         double longitude = ThreadLocalRandom.current().nextDouble(-180.0D, 180.0D);
         longitude = Double.parseDouble(String.format("%.6f", longitude));
         double latitude = ThreadLocalRandom.current().nextDouble(-85.05112878D, 85.05112878D);

@@ -3,8 +3,6 @@ package rewardCentral;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
@@ -18,16 +16,12 @@ import user.UserReward;
 public class RewardsService {
 	private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 
-	static final List<Attraction> attractions = GpsUtil.getAttractions();
-
 	// proximity in miles
-    private int defaultProximityBuffer = 10;
+    private final int defaultProximityBuffer = 10;
 	private int proximityBuffer = defaultProximityBuffer;
-	private int attractionProximityRange = 200;
+	static private final int attractionProximityRange = 200;
 	private final GpsUtil gpsUtil;
 	private final RewardCentral rewardsCentral;
-
-	private Logger logger = LoggerFactory.getLogger(RewardsService.class);
 
 	public RewardsService(GpsUtil gpsUtil, RewardCentral rewardCentral) {
 		this.gpsUtil = gpsUtil;
@@ -44,11 +38,12 @@ public class RewardsService {
 
 	// Soussou
 	public void calculateRewards(User user) {
+		final List<Attraction> attractions = GpsUtil.getAttractions();
 		CopyOnWriteArrayList <VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
 		for(VisitedLocation visitedLocation : userLocations) {
 			attractions.parallelStream().forEach(attractionStream->
 			{
-				if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attractionStream.attractionName)).count() == 0) {
+				if(user.getUserRewards().parallelStream().filter(r -> r.attraction.attractionName.equals(attractionStream.attractionName)).count() == 0) {
 					if(nearAttraction(visitedLocation, attractionStream)) {
 						user.addUserReward(new UserReward(visitedLocation, attractionStream, getRewardPoints(attractionStream, user)));
 					}

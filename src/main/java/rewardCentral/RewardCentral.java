@@ -16,7 +16,7 @@ public class RewardCentral {
 
     public int getAttractionRewardPoints(UUID attractionId, UUID userId) {
         try {
-            TimeUnit.MILLISECONDS.sleep((long)ThreadLocalRandom.current().nextInt(1, 1000));
+            TimeUnit.MILLISECONDS.sleep((long)ThreadLocalRandom.current().nextInt(1, 10));
         } catch (InterruptedException var4) {
         }
 
