@@ -1,22 +1,21 @@
 package tourGuide;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Ignore;
+import gpsUtil.location.NearbyAttraction;
+import org.junit.Assert;
 import org.junit.Test;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
 import user.VisitedLocation;
 import rewardCentral.RewardCentral;
 import helper.InternalTestHelper;
 import rewardCentral.RewardsService;
 import user.User;
 import tripPricer.Provider;
+
+import static org.junit.Assert.*;
 
 public class TestTourGuideService {
 
@@ -90,8 +89,7 @@ public class TestTourGuideService {
 		
 		assertEquals(user.getUserId(), visitedLocation.userId);
 	}
-	
-	@Ignore // Not yet implemented
+
 	@Test
 	public void getNearbyAttractions() {
 		GpsUtil gpsUtil = new GpsUtil();
@@ -102,11 +100,12 @@ public class TestTourGuideService {
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 		
-		List<Attraction> attractions = tourGuideService.getNearByAttractions(visitedLocation);
-		
+		List<NearbyAttraction> attractions = tourGuideService.getNearByAttractions(user);
+
 		tourGuideService.tracker.stopTracking();
 		
 		assertEquals(5, attractions.size());
+		attractions.parallelStream().forEach(Assert::assertNotNull);
 	}
 	
 	public void getTripDeals() {

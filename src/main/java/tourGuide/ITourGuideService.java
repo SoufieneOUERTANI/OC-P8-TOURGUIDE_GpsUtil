@@ -1,6 +1,7 @@
 package tourGuide;
 
 import gpsUtil.location.Attraction;
+import gpsUtil.location.NearbyAttraction;
 import tripPricer.Provider;
 import user.User;
 import user.UserReward;
@@ -23,6 +24,6 @@ public interface ITourGuideService {
 
     VisitedLocation trackUserLocation(User user);
 
-    List<Attraction> getNearByAttractions(VisitedLocation visitedLocation);
+    List<NearbyAttraction> getNearByAttractions(User user);
 
 }

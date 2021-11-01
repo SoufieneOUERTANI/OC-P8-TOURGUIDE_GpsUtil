@@ -2,16 +2,11 @@ package tourGuide;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import gpsUtil.location.NearbyAttraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,6 +14,7 @@ import org.springframework.stereotype.Service;
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
+import rewardCentral.RewardCentral;
 import user.VisitedLocation;
 import rewardCentral.RewardsService;
 import helper.InternalTestHelper;
@@ -100,15 +96,30 @@ public class TourGuideService implements ITourGuideService {
 	}
 
 	@Override
-	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for(Attraction attraction : gpsUtil.getAttractions()) {
-			if(rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-				nearbyAttractions.add(attraction);
-			}
-		}
+	public List<NearbyAttraction> getNearByAttractions(User user) {
+		VisitedLocation visitedLocation = getUserLocation(user);
+		List<Attraction> nearbyAttractions = GpsUtil.getAttractions();
 
-		return nearbyAttractions;
+		nearbyAttractions.sort((attraction1, attraction2) -> {
+			if((rewardsService.getDistance(attraction1, visitedLocation.location) -
+					rewardsService.getDistance(attraction2, visitedLocation.location)) == 0)
+				return 0;
+			if((rewardsService.getDistance(attraction1, visitedLocation.location) -
+					rewardsService.getDistance(attraction2, visitedLocation.location)) > 0)
+				return 1;
+			return -1;
+		});
+
+		return nearbyAttractions.subList(0,5).parallelStream().map(
+				nearbyAttraction ->
+						new NearbyAttraction(
+								nearbyAttraction.attractionName,
+								new Location(nearbyAttraction.latitude,nearbyAttraction.longitude),
+								visitedLocation.location,
+								rewardsService.getDistance(nearbyAttraction, visitedLocation.location),
+								new RewardCentral().getAttractionRewardPoints(nearbyAttraction.attractionId,user.getUserId())
+						)
+		).collect(Collectors.toList());
 	}
 
 
