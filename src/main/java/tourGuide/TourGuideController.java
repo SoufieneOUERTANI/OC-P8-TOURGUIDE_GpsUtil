@@ -2,9 +2,14 @@ package tourGuide;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import gpsUtil.location.Location;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +25,7 @@ public class TourGuideController {
 
 	@Autowired
 	TourGuideService tourGuideService;
-	
+
     @RequestMapping("/")
     public String index() {
         return "Greetings from TourGuide!";
@@ -57,7 +62,8 @@ public class TourGuideController {
     
     @RequestMapping("/getAllCurrentLocations")
     public String getAllCurrentLocations() {
-    	// TODO: Get a list of every user's most recent location as JSON
+        // TODO: Soufiene => test/ test parallel
+        // Done: Get a list of every user's most recent location as JSON
     	//- Note: does not use gpsUtil to query for their current location, 
     	//        but rather gathers the user's current location from their stored location history.
     	//
@@ -66,8 +72,21 @@ public class TourGuideController {
     	//        "019b04a9-067a-4c76-8817-ee75088c3822": {"longitude":-48.188821,"latitude":74.84371} 
     	//        ...
     	//     }
-    	
-    	return JsonStream.serialize("");
+
+        FilterProvider filter = new SimpleFilterProvider().addFilter("VisitedLocationFilter",
+                SimpleBeanPropertyFilter.filterOutAllExcept("timeVisited"));
+
+    	return JsonStream.serialize(
+                        tourGuideService
+                                .getAllUsers()
+                                .parallelStream()
+                                .map(user -> {
+                                    MappingJacksonValue value = new MappingJacksonValue(user);
+                                    value.setFilters(filter);
+                                    return value;
+                                })
+                                .collect(Collectors.toList())
+                );
     }
     
     @RequestMapping("/getTripDeals")
@@ -79,6 +98,6 @@ public class TourGuideController {
     private User getUser(String userName) {
     	return tourGuideService.getUser(userName);
     }
-   
+
 
 }
