@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.stereotype.Service;
 
-import gpsUtil.GpsUtil;
+import tourGuide.webClient.GpsUtilWebClient;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import user.VisitedLocation;
@@ -20,11 +20,11 @@ public class RewardsService {
     private final int defaultProximityBuffer = 10;
 	private int proximityBuffer = defaultProximityBuffer;
 	static private final int attractionProximityRange = 200;
-	private final GpsUtil gpsUtil;
+	private final GpsUtilWebClient gpsUtilWebClient;
 	private final RewardCentral rewardsCentral;
 
-	public RewardsService(GpsUtil gpsUtil, RewardCentral rewardCentral) {
-		this.gpsUtil = gpsUtil;
+	public RewardsService(GpsUtilWebClient gpsUtilWebClient, RewardCentral rewardCentral) {
+		this.gpsUtilWebClient = gpsUtilWebClient;
 		this.rewardsCentral = rewardCentral;
 	}
 
@@ -38,7 +38,7 @@ public class RewardsService {
 
 	// Soussou
 	public void calculateRewards(User user) {
-		final List<Attraction> attractions = GpsUtil.getAttractions();
+		final List<Attraction> attractions = GpsUtilWebClient.getAttractions();
 		CopyOnWriteArrayList <VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
 		for(VisitedLocation visitedLocation : userLocations) {
 			attractions.parallelStream().forEach(attractionStream->

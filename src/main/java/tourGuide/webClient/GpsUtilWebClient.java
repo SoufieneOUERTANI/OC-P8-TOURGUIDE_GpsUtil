@@ -1,13 +1,13 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
-package gpsUtil;
+package tourGuide.webClient;
 
 import com.google.common.util.concurrent.RateLimiter;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import user.VisitedLocation;
 
 import java.util.ArrayList;
@@ -17,10 +17,14 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public class GpsUtil {
+public class GpsUtilWebClient {
+
+    @Value("${server.port}")
+    String serverPort;
+
     private static final RateLimiter rateLimiter = RateLimiter.create(1000.0D);
 
-    public GpsUtil() {
+    public GpsUtilWebClient() {
     }
 
     public VisitedLocation getUserLocation(UUID userId) {
@@ -32,6 +36,18 @@ public class GpsUtil {
         latitude = Double.parseDouble(String.format("%.6f", latitude));
         VisitedLocation visitedLocation = new VisitedLocation(userId, new Location(latitude, longitude), new Date());
         return visitedLocation;
+
+/*        Mono<VisitedLocation> webClientMono = WebClient.create("http://localhost:8080")
+                .get().uri( uriBuilder -> uriBuilder
+                        .path("/getUserLocation")
+                        .queryParam("userId", userId).build())
+                .retrieve()
+                .bodyToMono(VisitedLocation.class);
+
+        webClientMono.subscribe(System.out::println);
+
+        return webClientMono.block();*/
+
     }
 
     // Soussou

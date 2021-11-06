@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import gpsUtil.GpsUtil;
+import tourGuide.webClient.GpsUtilWebClient;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import rewardCentral.RewardCentral;
@@ -27,14 +27,14 @@ import tripPricer.TripPricer;
 @Service
 public class TourGuideService implements ITourGuideService {
 	private static final Logger logger = LoggerFactory.getLogger(TourGuideService.class);
-	private final GpsUtil gpsUtil;
+	private final GpsUtilWebClient gpsUtilWebClient;
 	private final RewardsService rewardsService;
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;
 	
-	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
-		this.gpsUtil = gpsUtil;
+	public TourGuideService(GpsUtilWebClient gpsUtilWebClient, RewardsService rewardsService) {
+		this.gpsUtilWebClient = gpsUtilWebClient;
 		this.rewardsService = rewardsService;
 		
 		if(testMode) {
@@ -89,7 +89,7 @@ public class TourGuideService implements ITourGuideService {
 
 	@Override
 	public VisitedLocation trackUserLocation(User user) {
-		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
+		VisitedLocation visitedLocation = gpsUtilWebClient.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
@@ -98,7 +98,7 @@ public class TourGuideService implements ITourGuideService {
 	@Override
 	public List<NearbyAttraction> getNearByAttractions(User user) {
 		VisitedLocation visitedLocation = getUserLocation(user);
-		List<Attraction> nearbyAttractions = GpsUtil.getAttractions();
+		List<Attraction> nearbyAttractions = GpsUtilWebClient.getAttractions();
 
 		nearbyAttractions.sort((attraction1, attraction2) -> {
 			if((rewardsService.getDistance(attraction1, visitedLocation.location) -
