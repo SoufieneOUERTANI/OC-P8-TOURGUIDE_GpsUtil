@@ -1,5 +1,6 @@
 package tourGuide;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -8,6 +9,8 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import gpsUtil.location.Location;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jsoniter.output.JsonStream;
 
+import tracker.Tracker;
 import user.VisitedLocation;
 import user.User;
 import tripPricer.Provider;
 
 @RestController
 public class TourGuideController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TourGuideController.class);
 
 	@Autowired
 	TourGuideService tourGuideService;
@@ -81,7 +87,7 @@ public class TourGuideController {
                                 .getAllUsers()
                                 .parallelStream()
                                 .map(user -> {
-                                    MappingJacksonValue value = new MappingJacksonValue(user);
+                                    MappingJacksonValue value = new MappingJacksonValue(user.getLastVisitedLocation());
                                     value.setFilters(filter);
                                     return value;
                                 })
