@@ -1,59 +1,112 @@
 package tourGuide.webClient;
 
+import Constants.Constants;
 import com.google.common.util.concurrent.RateLimiter;
 import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
+import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeFunction;
+
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 import user.VisitedLocation;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.time.Duration;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+@NoArgsConstructor
+@Service
 public class GpsUtilWebClient {
 
-    @Value("${server.port}")
-    String serverPort;
+    private static final Logger logger = LoggerFactory.getLogger(GpsUtilWebClient.class);
+
+
+
+/*    @Value("${server.port}")
+    String serverPort;*/
+
+
+    private static final String BASE_URL = "http://localhost:8080/";
+
+    private static final WebClient webClient = WebClient.builder()
+            .baseUrl(BASE_URL)
+/*            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+            .filter(logRequest())*/
+            .build();
+    private ExchangeFunction exchangeFunction;
 
     private static final RateLimiter rateLimiter = RateLimiter.create(1000.0D);
 
-    public GpsUtilWebClient() {
-    }
+    //@Autowired
+/*    public GpsUtilWebClient(WebClient webClient, ExchangeFunction exchangeFunction) {
+        this.webClient = webClient;
+        this.exchangeFunction = exchangeFunction;
+    }*/
 
+    // TODO : Parallelize
     public VisitedLocation getUserLocation(UUID userId) {
-        rateLimiter.acquire();
+/*        rateLimiter.acquire();
         //this.sleepLighter();
         double longitude = ThreadLocalRandom.current().nextDouble(-180.0D, 180.0D);
         longitude = Double.parseDouble(String.format("%.6f", longitude));
         double latitude = ThreadLocalRandom.current().nextDouble(-85.05112878D, 85.05112878D);
         latitude = Double.parseDouble(String.format("%.6f", latitude));
         VisitedLocation visitedLocation = new VisitedLocation(userId, new Location(latitude, longitude), new Date());
-        return visitedLocation;
+        return visitedLocation;*/
 
-/*        Mono<VisitedLocation> webClientMono = WebClient.create("http://localhost:8080")
-                .get().uri( uriBuilder -> uriBuilder
-                        .path("/getUserLocation")
-                        .queryParam("userId", userId).build())
-                .retrieve()
-                .bodyToMono(VisitedLocation.class);
+/*        this.webClient = WebClient
+                .builder()
+                .baseUrl(BASE_URL)
+                //.exchangeFunction(exchangeFunction)
+                .build();
 
-        webClientMono.subscribe(System.out::println);
+
+        Mono<VisitedLocation> webClientMono =
+                this.webClient
+                        .get()
+                        .uri(
+                                uriBuilder -> uriBuilder
+                                        .path("/getUserLocation")
+                                        .queryParam("userId", userId).build()
+                        )
+                        .retrieve()
+                        .bodyToMono(VisitedLocation.class);
+
+        logger.debug("webClientMono.block() : "+webClientMono.block());
 
         return webClientMono.block();*/
+
+/*        this.webClient = WebClient
+                .builder()
+                .baseUrl(BASE_URL)
+                .exchangeFunction(exchangeFunction)
+                .build();*/
+
+        //try {
+
+            return webClient.get().uri(Constants.GPS_UTIL_USER_LOCATION, userId)
+                    .retrieve()
+                    .bodyToMono(VisitedLocation.class)
+                    .block();
+
+/*        } catch (WebClientResponseException ex) {
+            log.error("Error Response code is : {} and the message is {}", ex.getRawStatusCode(), ex.getResponseBodyAsString());
+            log.error("WebClientResponseException in retrieveEmployeeById", ex);
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Exception in retrieveEmployeeById ", ex);
+            throw ex;
+        }*/
 
     }
 
     // Soussou
-    static final public List<Attraction> getAttractions() {
+    public static List<Attraction> getAttractions() {
         /* rateLimiter.acquire();      this.sleepLighter();*/
-        List<Attraction> attractions = new ArrayList();
+/*        List<Attraction> attractions = new ArrayList();
         attractions.add(new Attraction("Disneyland", "Anaheim", "CA", 33.817595D, -117.922008D));
         attractions.add(new Attraction("Jackson Hole", "Jackson Hole", "WY", 43.582767D, -110.821999D));
         attractions.add(new Attraction("Mojave National Preserve", "Kelso", "CA", 35.141689D, -115.510399D));
@@ -80,8 +133,14 @@ public class GpsUtilWebClient {
         attractions.add(new Attraction("Kansas City Zoo", "Kansas City", "MO", 39.007504D, -94.529625D));
         attractions.add(new Attraction("Bronx Zoo", "Bronx", "NY", 40.852905D, -73.872971D));
         attractions.add(new Attraction("Cinderella Castle", "Orlando", "FL", 28.419411D, -81.5812D));
-        return attractions;
+        return attractions;*/
+        return webClient.get().uri(Constants.GPS_UTIL_USER_ALL_ATTRACTIONS)
+                .retrieve()
+                .bodyToFlux (Attraction.class)
+                .collectList()
+                .block();
     }
+
 
     private void sleep() {
         int random = ThreadLocalRandom.current().nextInt(30, 100);

@@ -5,12 +5,19 @@
 
 package gpsUtil.location;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.NoArgsConstructor;
+
 public class Location {
     public final double longitude;
     public final double latitude;
 
-    public Location(double latitude, double longitude) {
+
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public Location(@JsonProperty("latitude") double latitude,@JsonProperty("longitude") double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
 }

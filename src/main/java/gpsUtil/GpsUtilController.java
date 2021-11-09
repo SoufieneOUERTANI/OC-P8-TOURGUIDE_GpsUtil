@@ -14,8 +14,12 @@ import java.util.UUID;
 @RestController
 public class GpsUtilController {
 
-    @Autowired
     GpsUtilService gpsUtilService;
+
+    @Autowired
+    public GpsUtilController(GpsUtilService gpsUtilService){
+        this.gpsUtilService =gpsUtilService;
+    }
 
     @GetMapping("/getUserLocation")
     public VisitedLocation getUserLocation(@RequestParam UUID userId) {

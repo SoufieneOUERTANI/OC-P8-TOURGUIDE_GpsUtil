@@ -8,6 +8,7 @@ package gpsUtil;
 import com.google.common.util.concurrent.RateLimiter;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
+import org.springframework.stereotype.Service;
 import user.VisitedLocation;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+@Service
 public class GpsUtilService {
     private static final RateLimiter rateLimiter = RateLimiter.create(1000.0D);
 

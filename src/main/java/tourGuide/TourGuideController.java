@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,12 @@ public class TourGuideController {
     public String getLocation(@RequestParam String userName) {
     	VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
 		return JsonStream.serialize(visitedLocation.location);
+    }
+
+    @RequestMapping("/getAttractions")
+    public List<Attraction> getAttractions() {
+        //List<Attraction> attractions = tourGuideService.getAttractions();
+        return tourGuideService.getAttractions();
     }
     
     //  Done : Change this method to no longer return a List of Attractions.
@@ -79,8 +86,9 @@ public class TourGuideController {
     	//        ...
     	//     }
 
-        FilterProvider filter = new SimpleFilterProvider().addFilter("VisitedLocationFilter",
-                SimpleBeanPropertyFilter.filterOutAllExcept("timeVisited"));
+        // TODO :
+/*        FilterProvider filter = new SimpleFilterProvider().addFilter("VisitedLocationFilter",
+                SimpleBeanPropertyFilter.filterOutAllExcept("timeVisited"));*/
 
     	return JsonStream.serialize(
                         tourGuideService
@@ -88,7 +96,7 @@ public class TourGuideController {
                                 .parallelStream()
                                 .map(user -> {
                                     MappingJacksonValue value = new MappingJacksonValue(user.getLastVisitedLocation());
-                                    value.setFilters(filter);
+                                    //value.setFilters(filter);
                                     return value;
                                 })
                                 .collect(Collectors.toList())

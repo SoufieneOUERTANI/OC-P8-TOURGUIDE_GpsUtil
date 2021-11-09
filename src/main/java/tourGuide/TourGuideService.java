@@ -95,6 +95,11 @@ public class TourGuideService implements ITourGuideService {
 		return visitedLocation;
 	}
 
+	public List<Attraction> getAttractions() {
+		List<Attraction> attractions = gpsUtilWebClient.getAttractions();
+		return attractions;
+	}
+
 	@Override
 	public List<NearbyAttraction> getNearByAttractions(User user) {
 		VisitedLocation visitedLocation = getUserLocation(user);
