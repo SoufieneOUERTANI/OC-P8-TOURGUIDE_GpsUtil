@@ -4,6 +4,7 @@ package tourGuide.webClient;
 import Constants.Constants;
 import gpsUtil.GpsUtilService;
 import gpsUtil.location.Attraction;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,7 +76,7 @@ class GpsUtilWebClientTest {
     @AfterEach
     void tearDown() {
     }
-
+    @Ignore
     @Test
 //    void getUserLocation() {
     void webClient_verifyCalledUrl_1() {

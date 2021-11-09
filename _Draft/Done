@@ -1,0 +1,32 @@
+mv gitignore.txt .gitignore
+git rm -r --cached .
+git add .
+git commit --amend --no-edit
+git push -f
+
+http://localhost:8080/swagger-ui.html
+
+D:\Learn\OpenClassrooms\Projet_08\OC-P8-TOURGUIDE\OC-P8-TOURGUIDE_GpsUtil
+
+.\gradlew build -x test
+
+D:\Learn\OpenClassrooms\Projet_08\OC-P8-TOURGUIDE\OC-P8-TOURGUIDE_GpsUtil\build\libs\
+
+java -jar tourGuide-GpsUtil-1.0.0.jar
+
+docker build --build-arg JAR_FILE="build/libs/*.jar" -t oc-p8-tourguide/oc-p8-tourguide_gpsutil .
+
+docker container ls
+
+docker images
+
+docker container ls
+
+docker run -p 8083:8083 oc-p8-tourguide/oc-p8-tourguide_gpsutil
+
+docker container ls
+
+docker container lf
+
+
+

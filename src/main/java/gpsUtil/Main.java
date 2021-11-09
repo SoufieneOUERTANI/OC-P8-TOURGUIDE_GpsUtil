@@ -11,7 +11,7 @@ public class Main {
     public Main() {
     }
 
-    public static void main(String[] args) {
+    public static void main_(String[] args) {
         for(int i = 0; i < 100; ++i) {
             double randomLat = ThreadLocalRandom.current().nextDouble(-180.0D, 180.0D);
             randomLat = Double.parseDouble(String.format("%.6f", randomLat));

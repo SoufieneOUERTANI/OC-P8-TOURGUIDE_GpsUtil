@@ -1,7 +1,0 @@
-mv gitignore.txt .gitignore
-git rm -r --cached .
-git add .
-git commit --amend --no-edit
-git push -f
-
-http://localhost:8080/swagger-ui.html

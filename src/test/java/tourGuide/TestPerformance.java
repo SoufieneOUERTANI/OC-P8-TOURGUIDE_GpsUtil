@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.commons.lang3.time.StopWatch;
 
 import org.junit.jupiter.api.Assertions;
@@ -42,7 +43,7 @@ public class TestPerformance {
 	 *          assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	 */
 	
-	//@Ignore
+	@Ignore
 	@Test
 	public void highVolumeTrackLocation() {
 		GpsUtilWebClient gpsUtilWebClient = new GpsUtilWebClient();
